@@ -1,15 +1,17 @@
+import os.path
+
 import requests
 from bs4 import BeautifulSoup
-import os.path
+from Crawler.Zhihu_Crawler import login
 
 
 class Zhihu():
     def __init__(self):
         self.headers = {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
                         'Host': 'www.zhihu.com'}
-        self.cookie = {
-            'z_c0': 'Mi4wQUJDTVpzcWVmUWdBRU1EcGc1S2lDUmNBQUFCaEFsVk5LVTNkVndDaUl3NFdyLW9GS09zWXdNak9kbVdMVWtUT2pR|1471529339|4be0f2588f3ce36b105e8e753000fdfe600cc67b'}
+        zh = login.login('15225480602', '1998925sk')
         self.session = requests.session()
+        self.session = zh.main()
         self.title = ''
 
     def getImage(self, pageUrl):
@@ -36,9 +38,9 @@ class Zhihu():
             print('正在下载《%s》问题下的%s的第%d张图片' % (title, author, num))
             temp = i.split('/')
             content = self.session.get(i)
-            if not os.path.exists('E:\\Python3\\Crawler\\爬取知乎图片\pic\\' + title + '\\' + author):
-                os.makedirs('E:\\Python3\\Crawler\\爬取知乎图片\pic\\' + title + '\\' + author)
-            with open('E:\\Python3\\Crawler\\爬取知乎图片\pic\\' + title + '\\' + author + '\\' + str(temp[3]),
+            if not os.path.exists('E:\\Python3\\Crawler\\Zhihu_Crawler\pic\\' + title + '\\' + author):
+                os.makedirs('E:\\Python3\\Crawler\\Zhihu_Crawler\\pic\\' + title + '\\' + author)
+            with open('E:\\Python3\\Crawler\\Zhihu_Crawler\\pic\\' + title + '\\' + author + '\\' + str(temp[3]),
                       'wb+') as file:
                 file.write(content.content)
 
@@ -48,6 +50,5 @@ class Zhihu():
 if __name__ == "__main__":
     answer = input('输入问题编号：')
     url = 'https://www.zhihu.com/question/' + str(answer)
-    image=Zhihu()
+    image = Zhihu()
     image.getImage(url)
-
